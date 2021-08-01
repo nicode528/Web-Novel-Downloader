@@ -1,6 +1,8 @@
-from typing import List
-from bs4 import BeautifulSoup
 from abc import ABC, abstractmethod
+from typing import List
+
+from bs4 import BeautifulSoup
+
 
 class SiteInterface(ABC):
     @abstractmethod

@@ -127,17 +127,13 @@ class Book:
         print(str(chapter_number) + ' chapters downloaded')
 
     async def _create_chapter(self, session, url, chapter_number):
-        async with session.get(url) as response:
-            html = await response.read()
-            chapter_soup = self.siteManager.soupify(html)
-            chapter_name = self.siteManager.getChapterName(chapter_soup)
-            chapter_content = self.siteManager.getChapterContent(chapter_soup, chapter_name)
-            chapter = epub.EpubHtml(uid=str(chapter_number),\
-                title=chapter_name,\
-                file_name=(str(chapter_number) + '.xhtml'))
-            chapter.set_content(chapter_content)
-            chapter.add_item(self.css)
-            self.chapters.append({chapter_number: chapter})
+        chapter_name, chapter_content = await self.siteManager.getChapterContent(session, url)
+        chapter = epub.EpubHtml(uid=str(chapter_number),\
+            title=chapter_name,\
+            file_name=(str(chapter_number) + '.xhtml'))
+        chapter.set_content(chapter_content)
+        chapter.add_item(self.css)
+        self.chapters.append({chapter_number: chapter})
 
 
     def build(self):

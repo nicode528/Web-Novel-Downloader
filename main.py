@@ -1,28 +1,39 @@
 #!/usr/bin/env python3
 
-from sitemanager.xxbiquge import Xxbiquge
-from sitemanager.xbiquge import Xbiquge
-from bookmanager.book import Book
-import re
 import os
+import re
 
-if __name__ == "__main__":
-    os.chdir(os.path.expanduser('~'))
+import click
 
-    url = (input('Paste URL: '))
-    # while not re.match('https?:\/\/www\.xbiquge\.so\/book\/\d+\/', book_main_url):
-    #     print('Invalid URL: Format should be https://www.xbiquge.so/book/\{book_code\}/')
-    #     book_main_url = (input('Paste 笔趣阁 URL: '))
+from bookmanager.book import Book
+from sitemanager.hetushu import Hetushu
+from sitemanager.xbiquge import Xbiquge
+from sitemanager.xxbiquge import Xxbiquge
+
+
+@click.command()
+@click.option('-u', '--url', type=str, prompt="Paste URL", help='book url, check readme.md for available sites and url formats')
+@click.option('-o', '--output-dir', type=str, default=os.path.expanduser("~") + "/Downloads/", help='output directory')
+def main(url, output_dir):
+    """Download web novels as epub"""
 
     if re.match('https?:\/\/www\.xbiquge\.so\/book\/\d+\/?', url):
         site = Xbiquge(url)
     elif re.match('https?:\/\/www\.xxbiquge\.net\/\d+\/?', url):
         site = Xxbiquge(url)
+    elif re.match('https?:\/\/www\.hetushu\.com\/book\/\d+\/index.html', url):
+        site = Hetushu(url)
     else: 
         print("invalid url format")
-        exit(1)
+        exit(0)
+
+    if not os.path.isdir(output_dir):
+        print("directory {} does not exist".format(output_dir))
 
     book = Book(site)
     book.build()
-    book.export(os.path.expanduser("~") + "/Downloads/")
+    book.export(output_dir)
     exit(0)
+
+if __name__ == "__main__":
+    main()

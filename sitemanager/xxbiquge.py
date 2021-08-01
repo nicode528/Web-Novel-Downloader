@@ -1,8 +1,10 @@
-from typing import List
-from bs4 import BeautifulSoup
-from sitemanager.site import SiteInterface
-import urllib.request
 import re
+import urllib.request
+from typing import List
+
+from bs4 import BeautifulSoup
+
+from sitemanager.site import SiteInterface
 
 
 class Xxbiquge(SiteInterface):
@@ -49,7 +51,7 @@ class Xxbiquge(SiteInterface):
 
     def getChapterUrls(self, soup) -> List[str]:
         content_page = soup.findAll('dd')
-        domain = '/'.join(self.url.split('/')[:-1])
+        domain = '/'.join(self.url.split('/')[:3])
         chapters = []
 
         for content in content_page:
@@ -70,13 +72,16 @@ class Xxbiquge(SiteInterface):
                 .string
         return chapter_name
 
-    def getChapterContent(self, soup, chapter_name) -> str:
-        chapter_content = soup.find('div', attrs={'id': 'content'}).stripped_strings
-        chapter_content_string = '<h2>' + chapter_name + '</h2>'
+    async def getChapterContent(self, session, url) -> str:
+        async with session.get(url) as response:
+            html = await response.read()
+            soup = self.soupify(html)
+            chapter_name = self.getChapterName(soup)
 
-        for content in chapter_content:
-            chapter_content_string += '<p>' + content + '</p>'
+            chapter_content = soup.find('div', attrs={'id': 'content'}).stripped_strings
+            chapter_content_string = '<h2>' + chapter_name + '</h2>'
 
-        return chapter_content_string
+            for content in chapter_content:
+                chapter_content_string += '<p>' + content + '</p>'
 
-    
+            return chapter_name, chapter_content_string
