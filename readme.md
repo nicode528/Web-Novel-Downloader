@@ -22,13 +22,18 @@ Options:
   -o, --output-dir TEXT  output directory
   --help                 Show this message and exit.
 ```
-
+eg: `python main.py -u https://www.xxbiquge.net/75_75922/`
 
 Currently accepts URLs from
 ```
-https://www.xxbiquge.net eg: https://www.xxbiquge.net/75_75922/
-https://www.xbiquge.so eg: https://www.xbiquge.so/book/33903/
-https://www.hetushu.com eg: https://www.hetushu.com/book/2904/index.html
+https://www.xxbiquge.net
+    eg: https://www.xxbiquge.net/75_75922/
+
+https://www.xbiquge.so
+    eg: https://www.xbiquge.so/book/33903/
+
+https://www.hetushu.com
+    eg: https://www.hetushu.com/book/2904/index.html
 ```
 
 ### Development
