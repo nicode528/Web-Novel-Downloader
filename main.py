@@ -12,7 +12,7 @@ from sitemanager.xxbiquge import Xxbiquge
 
 
 @click.command()
-@click.option('-u', '--url', type=str, prompt="Paste URL", help='book url, check readme.md for available sites and url formats')
+@click.option('-u', '--url', type=str, prompt="Paste URL", help='web novel url, check readme.md for available sites and url formats')
 @click.option('-o', '--output-dir', type=str, default=os.path.expanduser("~") + "/Downloads/", help='output directory')
 def main(url, output_dir):
     """Download web novels as epub"""
