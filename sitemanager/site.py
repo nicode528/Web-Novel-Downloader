@@ -38,7 +38,7 @@ class SiteInterface(ABC):
         pass
 
     @abstractmethod
-    def getChapterContent(self, soup, chapter_name) -> str:
+    def getChapterContent(self, session, url) -> tuple[str, str]:
         pass
 
 

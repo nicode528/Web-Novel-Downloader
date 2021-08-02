@@ -5,6 +5,7 @@ import asyncio
 import aiohttp
 from ebooklib import epub
 from tqdm.asyncio import tqdm
+from tqdm import tqdm as tq
 
 
 class Book:
@@ -112,29 +113,31 @@ class Book:
         async with aiohttp.ClientSession() as session:
             tasks = []
             chapter_number = 0
+            pbar = tq(total=len(self.chapter_urls))
             for url in self.chapter_urls:
                 chapter_number += 1
-                tasks.append(self._create_chapter(session, url, chapter_number))
-            for task in tqdm.as_completed(tasks):
+                tasks.append(self._create_chapter(session, url, chapter_number, pbar))
+            for task in asyncio.as_completed(tasks):
                 await task
         
+        pbar.close()
         self.chapters = sorted(self.chapters, key=lambda c: list(c.keys()))
         for chapter in self.chapters:
             chapter_content = list(chapter.values())[0]
             self.book.add_item(chapter_content)
             self.book.toc.append(chapter_content)
             self.book.spine.append(chapter_content)
-        print(str(chapter_number) + ' chapters downloaded')
+        print('\n{} chapters downloaded'.format(chapter_number))
 
-    async def _create_chapter(self, session, url, chapter_number):
+    async def _create_chapter(self, session, url, chapter_number, pbar):
         chapter_name, chapter_content = await self.siteManager.getChapterContent(session, url)
         chapter = epub.EpubHtml(uid=str(chapter_number),\
             title=chapter_name,\
-            file_name=(str(chapter_number) + '.xhtml'))
+            file_name=('{}.xhtml'.format(chapter_number)))
         chapter.set_content(chapter_content)
         chapter.add_item(self.css)
         self.chapters.append({chapter_number: chapter})
-
+        pbar.update(1)
 
     def build(self):
         self._initialize_book()
@@ -143,7 +146,7 @@ class Book:
         asyncio.run(self._create_chapters())
 
     def export(self, destination):
-        filename = destination + self.name + ' - ' + self.author + '.epub'
+        filename = '{}{} - {}.epub'.format(destination, self.name, self.author)
         epub.write_epub(filename, self.book)
         print("exported to " + filename)
 

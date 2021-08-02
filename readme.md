@@ -2,7 +2,7 @@
 
 ### Requirements
 
-Python 3.7 and above
+Python 3.9 and above
 
 ### Installing
 

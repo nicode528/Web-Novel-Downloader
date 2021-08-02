@@ -72,7 +72,7 @@ class Xxbiquge(SiteInterface):
                 .string
         return chapter_name
 
-    async def getChapterContent(self, session, url) -> str:
+    async def getChapterContent(self, session, url) -> tuple[str, str]:
         async with session.get(url) as response:
             html = await response.read()
             soup = self.soupify(html)

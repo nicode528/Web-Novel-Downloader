@@ -1,3 +1,4 @@
+import asyncio
 import re
 import urllib.request
 from typing import List
@@ -14,6 +15,9 @@ class Hetushu(SiteInterface):
         self.url = url
         if self.url[-1] == "/":
             self.url = self.url[:-1]
+        self.initializeBrowser()
+
+    def initializeBrowser(self) -> None:
         options = Options()
         options.add_argument('headless')
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -83,15 +87,27 @@ class Hetushu(SiteInterface):
             print(soup.prettify())
         return chapter_name
 
-    async def getChapterContent(self, session, url) -> str:
+    async def getChapterContent(self, session, url) -> tuple[str, str]:
         self.browser.get(url)
         html = self.browser.page_source.encode('utf-8')
         soup = self.soupify(html)
+
+        # prevent cloudflare ddos block
+        while soup.find('span', attrs={'class': 'cf-error-code'}) is not None:
+            self.browser.close()
+            asyncio.sleep(10)
+            self.initializeBrowser()
+            self.browser.get(url)
+            html = self.browser.page_source.encode('utf-8')
+            soup = self.soupify(html)
+
         chapter_name = self.getChapterName(soup)
 
         chapter_content = soup.find('div', attrs={'id': 'content'})
+        
+        # remove random texts within the main body
         [a.extract() for a in chapter_content.findAll(re.compile("^((?!div).)*$"))]
-        prettify = chapter_content.prettify()
+        
         chapter_content_string = '<h2>' + chapter_name + '</h2>'
 
         for content in chapter_content.stripped_strings:
