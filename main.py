@@ -19,9 +19,13 @@ def main(url, output_dir):
 
     if re.match('https?:\/\/www\.xbiquge\.so\/book\/\d+\/?', url):
         site = Xbiquge(url)
+    elif  re.match('https?:\/\/m\.xbiquge\.so\/book\/\d+\/?', url):
+        site = Xbiquge(url.replace("/m.", "/www."))
     elif re.match('https?:\/\/www\.xxbiquge\.net\/\d+\/?', url):
         site = Xxbiquge(url)
     elif re.match('https?:\/\/www\.hetushu\.com\/book\/\d+\/index.html', url):
+        site = Hetushu(url)
+    elif re.match('https?:\/\/hetushu\.com\/book\/\d+\/index.html', url):
         site = Hetushu(url)
     else: 
         print("invalid url format")
