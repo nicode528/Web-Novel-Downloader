@@ -51,19 +51,21 @@ class Xbiquge(SiteInterface):
 
     def getChapterUrls(self, soup) -> List[str]:
         content_page = soup.findAll('dd')
-        chapters = []
+        chapter_url_list = []
+        chapter_num_list = []
 
         for content in content_page:
             try:
-                chapter = '/'.join([self.url, content.find('a')['href']])
+                chapter = int(content.find('a')['href'].replace('.html',''))
             except:
                 continue
-            chapters.append(chapter)
+            chapter_num_list.append(chapter)
 
-        chapter_set = set(chapters)
-        chapters = sorted(chapter_set)
+        chapter_set = set(chapter_num_list)
+        sorted_chapter_num_list = sorted(chapter_set)
+        chapter_url_list = ['/'.join([self.url, str(x) + ".html"]) for x in sorted_chapter_num_list]
 
-        return chapters
+        return chapter_url_list
 
     def getChapterName(self, soup) -> str:
         chapter_name = soup.find('div', attrs={'class': 'bookname'})\
