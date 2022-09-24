@@ -29,10 +29,11 @@ def main(url, output_dir):
         site = Hetushu(url)
     else: 
         print("invalid url format")
-        exit(0)
+        exit(1)
 
     if not os.path.isdir(output_dir):
         print("directory {} does not exist".format(output_dir))
+        exit(1)
 
     book = Book(site)
     book.build()
