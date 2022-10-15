@@ -21,7 +21,7 @@ class Book:
         self.info = self.siteManager.getBookInfo(soup)
         self.chapter_urls = self.siteManager.getChapterUrls(soup)
         self.chapters = []
-        self.style =  '''
+        self.style = '''
         body {
             margin: 10px;
             font-size: 1em;
@@ -86,7 +86,6 @@ class Book:
         print('内容简介：' + self.info)
         print('==================================================')
 
-        
     def _initialize_book(self):
         self.book = epub.EpubBook()
         self.book.set_identifier(self.code)
@@ -95,16 +94,17 @@ class Book:
         self.book.add_author(self.author)
         self.book.toc = []
         self.book.spine = ['nav']
-        self.css = epub.EpubItem(uid="style_default", file_name="style/default.css", media_type="text/css", content=self.style)
+        self.css = epub.EpubItem(
+            uid="style_default", file_name="style/default.css", media_type="text/css", content=self.style)
         self.book.add_item(self.css)
 
     def _create_about_page(self):
-        about = epub.EpubHtml(uid='title',\
-            title='内容简介',\
-            file_name='titlepage.xhtml')
-        about.set_content('<h1>' + self.name + '</h1>' +\
-            '<h1>' + '作者：' + self.author + '</h1>' +\
-                '<p>' + '内容简介：' + self.info + '</p>')
+        about = epub.EpubHtml(uid='title',
+                              title='内容简介',
+                              file_name='titlepage.xhtml')
+        about.set_content('<h1>' + self.name + '</h1>' +
+                          '<h1>' + '作者：' + self.author + '</h1>' +
+                          '<p>' + '内容简介：' + self.info + '</p>')
         about.add_item(self.css)
         self.book.add_item(about)
         self.book.spine.insert(0, about)
@@ -116,10 +116,11 @@ class Book:
             pbar = tq(total=len(self.chapter_urls))
             for url in self.chapter_urls:
                 chapter_number += 1
-                tasks.append(self._create_chapter(session, url, chapter_number, pbar))
+                tasks.append(self._create_chapter(
+                    session, url, chapter_number, pbar))
             for task in asyncio.as_completed(tasks):
                 await task
-        
+
         pbar.close()
         self.chapters = sorted(self.chapters, key=lambda c: list(c.keys()))
         for chapter in self.chapters:
@@ -131,9 +132,9 @@ class Book:
 
     async def _create_chapter(self, session, url, chapter_number, pbar):
         chapter_name, chapter_content = await self.siteManager.getChapterContent(session, url)
-        chapter = epub.EpubHtml(uid=str(chapter_number),\
-            title=chapter_name,\
-            file_name=('{}.xhtml'.format(chapter_number)))
+        chapter = epub.EpubHtml(uid=str(chapter_number),
+                                title=chapter_name,
+                                file_name=('{}.xhtml'.format(chapter_number)))
         chapter.set_content(chapter_content)
         chapter.add_item(self.css)
         self.chapters.append({chapter_number: chapter})
@@ -149,4 +150,3 @@ class Book:
         filename = '{}{} - {}.epub'.format(destination, self.name, self.author)
         epub.write_epub(filename, self.book)
         print("exported to " + filename)
-

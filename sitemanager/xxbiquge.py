@@ -28,13 +28,13 @@ class Xxbiquge(SiteInterface):
     def getBookName(self, soup) -> str:
         book_name = soup.find('div', attrs={'id': 'info'})\
             .find('h1')\
-                .string
+            .string
         return book_name
 
     def getBookAuthor(self, soup) -> str:
         book_author = soup.find('div', attrs={'id': 'info'})\
             .find('p')\
-                .string
+            .string
         return book_author.split('：')[-1]
 
     def getBookInfo(self, soup) -> str:
@@ -69,7 +69,7 @@ class Xxbiquge(SiteInterface):
     def getChapterName(self, soup) -> str:
         chapter_name = soup.find('div', attrs={'class': 'bookname'})\
             .find('h1')\
-                .string
+            .string
         return chapter_name
 
     async def getChapterContent(self, session, url) -> tuple[str, str]:
@@ -78,7 +78,8 @@ class Xxbiquge(SiteInterface):
             soup = self.soupify(html)
             chapter_name = self.getChapterName(soup)
 
-            chapter_content = soup.find('div', attrs={'id': 'content'}).stripped_strings
+            chapter_content = soup.find(
+                'div', attrs={'id': 'content'}).stripped_strings
             chapter_content_string = '<h2>' + chapter_name + '</h2>'
 
             for content in chapter_content:

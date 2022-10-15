@@ -32,9 +32,18 @@ https://www.xxbiquge.net
 https://www.xbiquge.so
     eg: https://www.xbiquge.so/book/33903/
 
+https://m.xbiquge.so
+    eg: https://m.xbiquge.so/book/33903/
+
 https://www.hetushu.com
     eg: https://www.hetushu.com/book/2904/index.html
+
+https://m.wfxs.tw
+    eg: https://m.wfxs.tw/xs-35433/
 ```
+
+`hetushu` and `wfxs` will require Selenium
+Run `update_chromedriver.ps1` to automatically download chromedriver
 
 ### Development
 

@@ -12,7 +12,7 @@ class SiteInterface(ABC):
     @abstractmethod
     def soupify(self, html) -> BeautifulSoup:
         pass
-    
+
     @abstractmethod
     def getBookCode(self) -> str:
         pass
@@ -40,5 +40,3 @@ class SiteInterface(ABC):
     @abstractmethod
     def getChapterContent(self, session, url) -> tuple[str, str]:
         pass
-
-
