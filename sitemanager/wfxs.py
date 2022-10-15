@@ -103,7 +103,7 @@ class Wfxs(SiteInterface):
 
         return chapter_name, chapter_content_string
 
-    def _getChapterContent(self, url):
+    def _getChapterContent(self, url) -> str:
         self.browser.get(url)
         html = self.browser.page_source.encode('utf-8')
         soup = self.soupify(html)
@@ -130,7 +130,7 @@ class Wfxs(SiteInterface):
 
         return current_part_content_string
 
-    def _getCurrentPartContent(self, url, soup):
+    def _getCurrentPartContent(self, url, soup) -> str:
         # prevent cloudflare ddos block
         while soup.find('span', attrs={'class': 'cf-error-code'}) is not None:
             self.browser.close()
